@@ -15,7 +15,7 @@ class Landing extends Component {
     } else {
       return (
         <>
-          <Recipes />
+          <Recipes authUser={this.props.authUser} />
         </>
         )
     }
@@ -36,7 +36,7 @@ class RecipesBase extends Component {
     this.setState({ loading: true });
 
     this.props.firebase
-      .recipes()
+      .recipes(this.props.authUser)
       .on('value', snapshot => {
       const recipeObject = snapshot.val();
         if (recipeObject) {
@@ -90,33 +90,36 @@ class RecipesBase extends Component {
     }
   };
 
-  onCreateRecipe = (event, authUser, title, image, ingredients, recipeText) => {
+  onCreateRecipe = (event, authUser, title, image, cookingTime, type, ingredients, recipeText) => {
     event.preventDefault();
 
-    this.props.firebase.recipes().push({
+    this.props.firebase.recipes(authUser).push({
       title: title,
       image: image,
       ingredients: ingredients,
+      cookingTime: cookingTime,
+      type: type,
       recipeText: recipeText,
       userId: authUser.uid,
     });
 
   };
 
-  onEditRecipe = (recipe, title, image, ingredients, recipeText) => {
+  onEditRecipe = (recipe, title, image, cookingTime, ingredients, recipeText) => {
     const { uid, ...recipeSnapshot } = recipe;
-    this.props.firebase.recipe(recipe.uid).set({
+    this.props.firebase.recipe(this.props.authUser,recipe.uid).set({
       ...recipeSnapshot,
       title,
       image,
       ingredients,
+      cookingTime,
       recipeText,
     });
   };
 
   onRemoveRecipe = uid => {
     const confirm = window.confirm('Are you sure you want to delete this recipe?');
-    if (confirm) this.props.firebase.recipe(uid).remove();
+    if (confirm) this.props.firebase.recipe(this.props.authUser,uid).remove();
   };
 
   render() {

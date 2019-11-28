@@ -16,6 +16,10 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Slide from '@material-ui/core/Slide';
 import Container from '@material-ui/core/Container';
 import Input from '@material-ui/core/Input';
@@ -58,6 +62,9 @@ const useStyles = makeStyles({
   ninety : {
     width: '90%',
     minHeight: '110px'
+  },
+  formControl : {
+    minWidth: 120
   }
 });
 
@@ -71,6 +78,8 @@ const AddFAB = ({ onCreateRecipe }) => {
   const [title, setTitle] = React.useState('');
   const [image, setImage] = React.useState(DEFAULT_RECIPE_IMAGE);
   const [ingredients, setIngredients] = React.useState(['']);
+  const [cookingTime, setCookingTime] = React.useState('');
+  const [type, setType] = React.useState('');
   const [recipeText, setRecipeText] = React.useState('');
   const [previewMode, setPreviewMode] = React.useState(false);
 
@@ -82,17 +91,23 @@ const AddFAB = ({ onCreateRecipe }) => {
     if (!force && (title !== '' || image !== '' || recipeText !== '' || ingredients.filter(Boolean).length)) {
       if (window.confirm('Are you sure you want to cancel adding this new recipe? All progress will be lost')) {
         setOpen(false);
-        setTitle('')
-        setImage(DEFAULT_RECIPE_IMAGE)
-        setIngredients([''])
-        setRecipeText('')
+        setPreviewMode(false);
+        setTitle('');
+        setImage(DEFAULT_RECIPE_IMAGE);
+        setIngredients(['']);
+        setCookingTime('');
+        setType('');
+        setRecipeText('');
       }
     } else {
       setOpen(false);
-      setTitle('')
-      setImage(DEFAULT_RECIPE_IMAGE)
-      setIngredients([''])
-      setRecipeText('')
+      setPreviewMode(false);
+      setTitle('');
+      setImage(DEFAULT_RECIPE_IMAGE);
+      setIngredients(['']);
+      setCookingTime('');
+      setType('');
+      setRecipeText('');
     }
   };
 
@@ -107,11 +122,19 @@ const AddFAB = ({ onCreateRecipe }) => {
       setTitle(value);
     } else if (field === 'recipeText') {
       setRecipeText(value);
+    } else if (field === 'cookingTime') {
+        setCookingTime(value);
     } else if (field === 'ingredients') {
       const ingreds = [...ingredients];
       ingreds[i] = value;
       setIngredients(ingreds)
     }
+  };
+
+  const onChangeSpinner = (event) => {
+    const value = event.target.value;
+
+    setType(value);
   };
 
   const onChangeFile = (files) => {
@@ -140,10 +163,11 @@ const AddFAB = ({ onCreateRecipe }) => {
       if (!recipeText) err += "\nrecipe text";
       alert(`Please fill in all the boxes! You missed out: ${err}.`)
     } else {
-      onCreateRecipe(e, authUser, title, image, filteredIngreds, recipeText)
+      onCreateRecipe(e, authUser, title, image, cookingTime, type, filteredIngreds, recipeText)
       setTitle('');
       setIngredients(['']);
-      setRecipeText('')
+      setRecipeText('');
+      setType('');
       handleClose(true);
     }
   }
@@ -224,6 +248,27 @@ const AddFAB = ({ onCreateRecipe }) => {
                         onChange={event => onChangeText(event, 'title')}
                       />
                     </Typography>
+                    <Typography variant="h4">
+                      <Input
+                        type="text"
+                        placeholder="Cooking Time..."
+                        value={cookingTime}
+                        onChange={event => onChangeText(event, 'cookingTime')}
+                      />
+                    </Typography>
+                    <FormControl className={classes.formControl}>
+                      <InputLabel id="type-label">Meal Type:</InputLabel>
+                      <Select
+                        value={type}
+                        onChange={onChangeSpinner}
+                        labelId="type-label"
+                        id="type"
+                      >
+                        <MenuItem value="brek">Breakfast</MenuItem>
+                        <MenuItem value="lAndD">Lunch & Dinner</MenuItem>
+                        <MenuItem value="snack">Snack</MenuItem>
+                      </Select>
+                    </FormControl>
                     <Typography className={classes.title} variant="h6">Ingredients:</Typography>
                     <ul>
                     {ingredients.map((e,i) => (
@@ -257,7 +302,7 @@ const AddFAB = ({ onCreateRecipe }) => {
                           value={recipeText}
                           onChange={event => onChangeText(event, 'recipeText')}
                           className={classes.ninety}
-                          />
+                        />
                       )}
                       <Button onClick={togglePreviewMode}>Preview</Button>
                     </div>

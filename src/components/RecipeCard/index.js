@@ -62,6 +62,7 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
   const [editMode, setEditMode] = React.useState(false)
   const [previewMode, setPreviewMode] = React.useState(false)
   const [editTitle, setEditTitle] = React.useState(recipe.title)
+  const [editCookingTime, setEditCookingTime] = React.useState(recipe.cookingTime)
   const [editImage, setEditImage] = React.useState(recipe.image)
   const [editIngreds, setEditIngreds] = React.useState(ingredients)
   const [editRecipeText, setEditRecipeText] = React.useState(recipe.recipeText)
@@ -77,6 +78,7 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
     if (
       editTitle !== recipe.title ||
       editImage !== recipe.image ||
+      editCookingTime !== recipe.cookingTime ||
       editRecipeText !== recipe.recipeText ||
       JSON.stringify(editIngreds) !== JSON.stringify(ingredients)
       ) {
@@ -84,13 +86,13 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
         setOpen(false);
         setEditMode(false);
         setPreviewMode(false);
-        onEditRecipe(recipe, editTitle, editImage, filteredIngreds, editRecipeText);
+        onEditRecipe(recipe, editTitle, editImage, editCookingTime, filteredIngreds, editRecipeText);
       }
     } else {
       setOpen(false);
       setEditMode(false);
       setPreviewMode(false);
-      onEditRecipe(recipe, editTitle, editImage, filteredIngreds, editRecipeText);
+      onEditRecipe(recipe, editTitle, editImage, editCookingTime, filteredIngreds, editRecipeText);
     }
   };
 
@@ -99,6 +101,7 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
     setEditTitle(recipe.title);
     setEditIngreds(ingredients)
     setEditRecipeText(recipe.recipeText);
+    setEditCookingTime(recipe.cookingTime);
   };
 
   const onTogglePreviewMode = () => {
@@ -112,6 +115,8 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
       setEditTitle(value);
     } else if (field==='recipeText') {
       setEditRecipeText(value);
+    } else if (field==='cookingTime') {
+      setEditCookingTime(value);
     }
   };
 
@@ -140,7 +145,7 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
 
   const onSaveEditText = () => {
     const filteredIngreds = editIngreds.filter(Boolean);
-    onEditRecipe(recipe, editTitle, editImage, filteredIngreds, editRecipeText);
+    onEditRecipe(recipe, editTitle, editImage, editCookingTime, filteredIngreds, editRecipeText);
     setEditMode(false);
     setPreviewMode(false);
     setEditIngreds(filteredIngreds);
@@ -148,7 +153,21 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
 
   const addIngredient = () => {
     editIngreds.push('');
-    onEditRecipe(recipe, editTitle, editImage, editIngreds, editRecipeText);
+    onEditRecipe(recipe, editTitle, editImage, editCookingTime, editIngreds, editRecipeText);
+  }
+
+  const getRecipeTypeText = type => {
+    switch (type) {
+      case "brek":
+        return "Breakfast"
+      case "lAndD":
+        return "Lunch & Dinner"
+      case "snack":
+        return "Snack"
+
+      default:
+        break;
+    }
   }
 
   const mobile = useMediaQuery('(max-width:600px)');
@@ -169,7 +188,7 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
                 {recipe.title}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
-                {recipe.cookingTime} || {recipe.meal}
+                {recipe.cookingTime} || {getRecipeTypeText(recipe.type)}
               </Typography>
             </CardContent>
           </CardActionArea>
@@ -261,6 +280,17 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
                   />
                 ) : (
                   <>{recipe.title}</>
+                )}
+              </Typography>
+              <Typography variant="h6">
+                {editMode ? (
+                  <Input
+                    type="text"
+                    value={editCookingTime}
+                    onChange={event => onChangeEditText(event, 'cookingTime')}
+                  />
+                ) : (
+                  <>{recipe.cookingTime}</>
                 )}
               </Typography>
               <Typography className={classes.title} variant="h6">Ingredients:</Typography>
