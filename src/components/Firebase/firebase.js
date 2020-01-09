@@ -20,7 +20,7 @@ class Firebase {
     this.db = app.database();
   }
 
-  doSignInWithGoogle = (email, password) => {
+  doSignInWithGoogle = () => {
     var provider = new app.auth.GoogleAuthProvider();
     return this.auth.signInWithPopup(provider);
   }

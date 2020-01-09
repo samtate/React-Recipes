@@ -28,6 +28,8 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 const useStyles = makeStyles({
   card: {
     maxWidth: 345,
+    width: 345,
+    margin: '20px'
   },
   media: {
     height: 140,
@@ -39,16 +41,15 @@ const useStyles = makeStyles({
     flexGrow: 1,
   },
   appbar: {
-		position: 'relative',
+    position: 'relative',
   },
-  cover: recipe => ({
+  cover: (recipe) => ({
     width: '100%',
     height: '20vh',
     'background-size': 'cover',
     background: `url("${recipe.image}") no-repeat center center`,
-  })
+  }),
 });
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -158,12 +159,12 @@ export default function RecipeCard({ recipe, onEditRecipe, onRemoveRecipe }) {
 
   const getRecipeTypeText = type => {
     switch (type) {
-      case "brek":
-        return "Breakfast"
-      case "lAndD":
-        return "Lunch & Dinner"
-      case "snack":
-        return "Snack"
+      case 'brek':
+        return 'Breakfast';
+      case 'lAndD':
+        return 'Lunch & Dinner';
+      case 'snack':
+        return 'Snack';
 
       default:
         break;

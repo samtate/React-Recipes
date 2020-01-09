@@ -3,9 +3,12 @@ import React, { Component } from 'react';
 import LoggedOut from '../LoggedOut';
 import RecipeCard from '../RecipeCard';
 
+import { makeStyles } from '@material-ui/core/styles';
+
 import { withFirebase } from '../Firebase';
 import { AuthUserContext } from '../Session';
 import AddFAB from '../AddFAB';
+import { flexbox } from '@material-ui/system';
 
 class Landing extends Component {
 
@@ -154,24 +157,33 @@ class RecipesBase extends Component {
   }
 }
 
+const useStyles = makeStyles({
+  container: {
+    maxWidth: '960px',
+    paddingTop: '10px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center'
+  },
+});
+
 function RecipeList({ authUser, recipes, onChangeText, onChangeFile, onCreateRecipe, onRemoveRecipe, onEditRecipe }) {
+  const classes = useStyles();
+
   return (
-    <>
+    <div className={classes.container}>
     {recipes.map(recipe => (
       <React.Fragment key={recipe.uid}>
           {authUser.uid === recipe.userId && (
             <RecipeCard
               recipe={recipe}
-              onChangeText={onChangeText}
-              onChangeFile={onChangeFile}
-              onCreateRecipe={onCreateRecipe}
               onEditRecipe={onEditRecipe}
               onRemoveRecipe={onRemoveRecipe}
             />
           )}
         </React.Fragment>
       ))}
-    </>
+    </div>
   )
 }
 
